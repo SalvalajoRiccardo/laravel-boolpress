@@ -72,6 +72,27 @@
             </div>
         </nav>
 
+        @auth
+        <ul class="nav justify-content-center">
+            <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="#">Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{route('admin.posts.index')}}">Posts</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Users</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Categories</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Tags</a>
+            </li>
+        </ul>
+
+        @endauth
+
         <main class="py-4">
             @yield('content')
         </main>
