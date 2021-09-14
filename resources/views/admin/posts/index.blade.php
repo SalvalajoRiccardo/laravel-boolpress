@@ -1,7 +1,23 @@
 @extends('layouts.app')
 
 @section('content')
+@if(session('updated'))
+<div class="alert alert-success">
+    {{ session('updated')}}
+</div>
+@endif
+@if(session('created'))
+<div class="alert alert-success">
+    {{ session('created')}}
+</div>
+@endif
+@if(session('destroyed'))
+<div class="alert alert-danger">
+    {{ session('destroyed')}}
+</div>
+@endif
 <table class="table table-info table-striped">
+    
     <thead>
         <tr>
             <th scope="col">#</th>
@@ -16,10 +32,9 @@
             <th scope="row">{{ $post->id }}</th>
             <td>{{ $post->title }}</td>
             <td> 
-                <a href="{{route('admin.posts.show', $post->id)}}" class="btn btn-primary">Show</a> 
+                <a href="{{route('admin.posts.show', $post->slug)}}" class="btn btn-primary">Show</a> 
                 <a href="{{route('admin.posts.edit', $post->id)}}" class="btn btn-warning">Edit</a>
-                <form action="" method="post" class="d-inline-block">
-                <!-- {{ route('admin.posts.destroy', $post->id) }} -->
+                <form action="{{ route('admin.posts.destroy', $post->id)}}" method="post" class="d-inline-block you-sure">
                     @csrf
                     @method('DELETE')
                     <input type="submit" value="delete" class="btn btn-danger">

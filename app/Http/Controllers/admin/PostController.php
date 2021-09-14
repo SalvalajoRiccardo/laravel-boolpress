@@ -37,14 +37,28 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'title' => 'required|max:60',
+            'content' => 'required'
+        ]);
         $data = $request->all();
         $newpost = new Post();
-        $newpost->slug = Str::slug($data['title'],'-');
+        $slug = Str::slug($data['title'],'-');
+        $slug_base = $slug;
+        $slug_presente = Post::where('slug', $slug)->first();
+
+        $contatore = 1;
+        while($slug_presente){
+            $slug = $slug_base . '-' .$contatore;
+            $slug_presente = Post::where('slug', $slug)->first();
+            $contatore++;
+        }
+        $newpost->slug = $slug;
         $newpost->fill($data);
 
         $newpost->save();
 
-        return redirect()->route('admin.posts.index');
+        return redirect()->route('admin.posts.index')->with('created', 'Hai creato: ' . $newpost->slug);
     }
 
     /**
@@ -77,11 +91,29 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
+        $request->validate([
+            'title' => 'required|max:60',
+            'content' => 'required'
+        ]);
         $data = $request->all();
 
+        if($data['title'] != $post->title){
+
+            $slug = Str::slug($data['title'],'-');
+            $slug_base = $slug;
+            $slug_presente = Post::where('slug', $slug)->first();
+
+            $contatore = 1;
+            while($slug_presente){
+                $slug = $slug_base . '-' . $contatore; 
+                $slug_presente = Post::where('slug', $slug)->first();
+                $contatore++;
+            }
+            $data['slug'] = $slug;
+        }
         $post->update($data);
 
-        return redirect()->route('admin.posts.index');
+        return redirect()->route('admin.posts.index')->with('updated', 'Hai modificato: ' . $post->slug);
     }
 
     /**
@@ -94,6 +126,6 @@ class PostController extends Controller
     {
         $post->delete();
 
-        return redirect()->route('admin.posts.index');
+        return redirect()->route('admin.posts.index')->with('destroyed', 'Hai cancellato: ' . $post->slug);
     }
 }
